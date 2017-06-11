@@ -1,4 +1,4 @@
-#Please note, that this is a copy of https://github.com/akveo/ng2-admin repo adjusted for my own needs
+# Please note, that this is a copy of https://github.com/akveo/ng2-admin repo adjusted for my own needs
 
 # Admin panel framework based on Angular, Bootstrap 4 and Angular CLI
 
