@@ -19,6 +19,8 @@
     },
     "menu": {
       "dashboard": "Dashboard",
+      "browse": "Browse",
+      "add": "Add",
       "editors": "Editors",
       "ck_editor": "CKEditor",
       "components": "Components",
@@ -55,11 +57,8 @@
   },
   "dashboard": {
     "acquisition_channels": "Acquisition Channels",
-    "users_by_country": "Users by Country",
     "revenue": "Revenue",
-    "feed": "Feed",
     "todo_list": "To Do List",
-    "calendar": "Calendar",
     "new_visits": "New Visits",
     "purchases": "Purchases",
     "active_users": "Active Users",

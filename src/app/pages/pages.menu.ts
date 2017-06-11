@@ -18,7 +18,7 @@ export const PAGES_MENU = [
         path: 'browse',
         data: {
           menu: {
-            title: 'general.menu.dashboard',
+            title: 'general.menu.browse',
             icon: 'ion-android-home',
             selected: false,
             expanded: false,
@@ -30,7 +30,7 @@ export const PAGES_MENU = [
         path: 'add',
         data: {
           menu: {
-            title: 'general.menu.dashboard',
+            title: 'general.menu.add',
             icon: 'ion-android-home',
             selected: false,
             expanded: false,
