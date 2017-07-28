@@ -5,7 +5,10 @@ import {AppTranslationModule} from '../../app.translation.module';
 import {NgaModule} from '../../theme/nga.module';
 
 import {BrowseComponent} from './browse.component';
+import {BrowseService} from './browse.service';
 import {routing} from './browse.routing';
+
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 @NgModule({
   imports: [
@@ -13,12 +16,15 @@ import {routing} from './browse.routing';
     FormsModule,
     AppTranslationModule,
     NgaModule,
+    Ng2SmartTableModule,
     routing
   ],
   declarations: [
     BrowseComponent
   ],
-  providers: []
+  providers: [
+    BrowseService
+  ]
 })
 export class BrowseModule {
 }
