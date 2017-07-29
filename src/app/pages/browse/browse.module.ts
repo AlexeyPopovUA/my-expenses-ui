@@ -3,12 +3,12 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {AppTranslationModule} from '../../app.translation.module';
 import {NgaModule} from '../../theme/nga.module';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 import {BrowseComponent} from './browse.component';
 import {BrowseService} from './browse.service';
+import { BrowseTableComponent } from './browse-table/browse.table.component';
 import {routing} from './browse.routing';
-
-import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 @NgModule({
   imports: [
@@ -20,7 +20,8 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     routing
   ],
   declarations: [
-    BrowseComponent
+    BrowseComponent,
+    BrowseTableComponent
   ],
   providers: [
     BrowseService
