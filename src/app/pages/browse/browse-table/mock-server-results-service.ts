@@ -1,81 +1,70 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { PagedData } from './model/paged-data';
 import { Payment } from './model/payment';
 import { Page } from './model/page';
-
-const paymentData = [
-  {
-    'name': 'AH',
-    'category': 'Food',
-    'date': 'Sat Aug 19 2017 21:11:56 GMT+0200 (CEST)',
-    'value': 22
-  }, {
-    'name': 'AH',
-    'category': 'Food',
-    'date': 'Sat Aug 19 2017 21:11:56 GMT+0200 (CEST)',
-    'value': 22
-  }, {
-    'name': 'AH',
-    'category': 'Food',
-    'date': 'Sat Aug 19 2017 21:11:57 GMT+0200 (CEST)',
-    'value': 32
-  }, {
-    'name': 'Smth',
-    'category': 'Travelling',
-    'date': 'Sat Aug 19 2017 21:11:58 GMT+0200 (CEST)',
-    'value': 21
-  }, {
-    'name': 'AH',
-    'category': 'Food',
-    'date': 'Sat Aug 19 2017 21:11:59 GMT+0200 (CEST)',
-    'value': 122
-  }, {
-    'name': 'AH',
-    'category': 'Food',
-    'date': 'Sat Aug 19 2017 21:11:54 GMT+0200 (CEST)',
-    'value': 23
-  }, {
-    'name': 'AH',
-    'category': 'Food',
-    'date': 'Sat Aug 19 2017 21:11:23 GMT+0200 (CEST)',
-    'value': 32
-  }
-];
+import { Http } from '@angular/http';
 
 /**
  * A server used to mock a paged data result from a server
  */
 @Injectable()
 export class MockServerResultsService {
+  private pagedData: PagedData<Payment> = new PagedData<Payment>();
+
+  constructor(private http: Http) {
+  }
 
   /**
    * A method that mocks a paged server response
    * @param page The selected page
    * @returns {any} An observable containing the employee data
    */
-  public getResults(page: Page): Observable<PagedData<Payment>> {
-    return Observable.of(paymentData).map(data => this.getPagedData(page));
+  getResults(page: Page): Promise<PagedData<Payment>> {
+    return this.getPagedDataRemote(page);
   }
 
-  /**
-   * Package companyData into a PagedData object based on the selected Page
-   * @param page The page data used to get the selected data from companyData
-   * @returns {PagedData<Payment>} An array of the selected data and page
-   */
-  private getPagedData(page: Page): PagedData<Payment> {
-    const pagedData = new PagedData<Payment>();
-    page.totalElements = paymentData.length;
-    page.totalPages = page.totalElements / page.size;
-    const start = page.pageNumber * page.size;
-    const end = Math.min((start + page.size), page.totalElements);
-    for (let i = start; i < end; i++) {
-      const jsonObj = paymentData[i];
-      const payment = new Payment(jsonObj.name, jsonObj.category, jsonObj.date, jsonObj.value);
-      pagedData.data.push(payment);
-    }
-    pagedData.page = page;
-    return pagedData;
+  private getPagedDataRemote(page: Page): Promise<PagedData<Payment>> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .get('http://localhost:3000/payments/get')
+        .toPromise()
+        .then(response => {
+          const result = response.json();
+
+          page.totalElements = result.results;
+          page.totalPages = page.totalElements / page.size;
+
+          const start = page.pageNumber * page.size;
+          const end = Math.min((start + page.size), page.totalElements);
+
+          this.pagedData.data.length = 0;
+
+          for (let i = start; i < end; i++) {
+            const jsonObj = result.items[i];
+            const payment = new Payment(jsonObj._id, jsonObj.name, jsonObj.category, jsonObj.date, jsonObj.value);
+            this.pagedData.data.push(payment);
+          }
+
+          this.pagedData.page = page;
+
+          resolve(this.pagedData);
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+    });
   }
 
 }
+
+/*
+this.source = new BrowseTableDataSource(http, {
+    endPoint: 'http://localhost:3000/payments/get',
+    dataKey: 'items',
+    pagerPageKey: 'page',
+    pagerLimitKey: 'limit',
+    totalKey: 'results',
+    sortFieldKey: 'sort',
+    sortDirKey: 'direction'
+});*/

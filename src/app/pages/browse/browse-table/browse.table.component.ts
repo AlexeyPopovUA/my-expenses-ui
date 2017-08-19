@@ -28,17 +28,17 @@ import { Page } from './model/page';
 export class BrowseTableComponent {
 
   columns = [
-    { name: 'Name' },
-    { name: 'Category' },
-    { name: 'Date' },
-    { name: 'Value' }
+    { name: 'Name', prop: 'name' },
+    { name: 'Category', prop: 'category' },
+    { name: 'Date', prop: 'date' },
+    { name: 'Value', prop: 'value' }
   ];
   page: Page = new Page();
   rows: Payment[] = [];
 
   constructor(private serverResultsService: MockServerResultsService) {
     this.page.pageNumber = 0;
-    this.page.size = 3;
+    this.page.size = 50;
   }
 
   ngOnInit() {
@@ -51,9 +51,12 @@ export class BrowseTableComponent {
    */
   setPage(pageInfo) {
     this.page.pageNumber = pageInfo.offset;
-    this.serverResultsService.getResults(this.page).subscribe(pagedData => {
-      this.page = pagedData.page;
-      this.rows = pagedData.data;
-    });
+    this.serverResultsService
+      .getResults(this.page)
+      .then(pagedData => {
+        console.warn('result from subscribe', pagedData);
+        this.page = pagedData.page;
+        this.rows = pagedData.data;
+      });
   }
 }

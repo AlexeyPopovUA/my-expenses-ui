@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
 import { AppTranslationModule } from '../../app.translation.module';
 import { NgaModule } from '../../theme/nga.module';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
@@ -14,7 +14,7 @@ import { routing } from './browse.routing';
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
+    HttpModule,
     AppTranslationModule,
     NgaModule,
     Ng2SmartTableModule,
