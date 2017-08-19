@@ -1,74 +1,59 @@
-import {Component} from '@angular/core';
-import {Http} from '@angular/http';
-
-import {BrowseTableDataSource} from './browse.table.data.source';
+import { Component } from '@angular/core';
+import { MockServerResultsService } from './mock-server-results-service';
+//import { PagedData } from './model/paged-data';
+import { Payment } from './model/payment';
+import { Page } from './model/page';
 
 @Component({
-  selector: 'browse-table',
+  selector: 'nga-browse-table',
+  providers: [
+    MockServerResultsService
+  ], // <!--(sort)="onSort($event)"-->
   template: `
-    <ng2-smart-table
-      [settings]="settings"
-      [source]="source"
-      (deleteConfirm)="onDeleteConfirm($event)"
-    ></ng2-smart-table>
-  `,
+    <ngx-datatable
+      class="material"
+      [rows]="rows"
+      [columns]="columns"
+      [columnMode]="'force'"
+      [headerHeight]="50"
+      [footerHeight]="50"
+      [rowHeight]="'auto'"
+      [externalPaging]="true"
+      [count]="page.totalElements"
+      [offset]="page.pageNumber"
+      [limit]="page.size"
+      (page)='setPage($event)'
+    ></ngx-datatable>`
 })
 export class BrowseTableComponent {
 
-  settings = {
-    pager: {
-      display: true,
-      perPage: 50
-    },
-    columns: {
-      name: {
-        title: 'name',
-        filter: false
-      },
-      category: {
-        title: 'category',
-        filter: false
-      },
-      date: {
-        title: 'date',
-        filter: false
-      },
-      value: {
-        title: 'value',
-        filter: false
-      }
-    }
-  };
+  columns = [
+    { name: 'Name' },
+    { name: 'Category' },
+    { name: 'Date' },
+    { name: 'Value' }
+  ];
+  page: Page = new Page();
+  rows: Payment[] = [];
 
-  source: BrowseTableDataSource;
-
-  constructor(http: Http) {
-    this.source = new BrowseTableDataSource(http, {
-      endPoint: 'http://localhost:3000/payments/get',
-      dataKey: 'items',
-      pagerPageKey: 'page',
-      pagerLimitKey: 'limit',
-      totalKey: 'results',
-      sortFieldKey: 'sort',
-      sortDirKey: 'direction'
-    });
-
-    this.source.onUpdated().subscribe(value => {
-      this.onEdited(value);
-    });
+  constructor(private serverResultsService: MockServerResultsService) {
+    this.page.pageNumber = 0;
+    this.page.size = 3;
   }
 
-  onDeleteConfirm(event) {
-    if (window.confirm('Are you sure you want to delete?')) {
-      event.confirm.resolve();
-    } else {
-      event.confirm.reject();
-    }
+  ngOnInit() {
+    this.setPage({ offset: 0 });
   }
 
-  onEdited(value) {
-    console.warn('onEdited', value);
-    //event.confirm.resolve();
-    //return Promise.resolve(value);
+  /**
+   * Populate the table with new data based on the page number
+   * @param pageInfo
+   */
+  setPage(pageInfo) {
+    this.page.pageNumber = pageInfo.offset;
+    this.serverResultsService.getResults(this.page).subscribe(pagedData => {
+      this.page = pagedData.page;
+      this.rows = pagedData.data;
+    });
   }
 }

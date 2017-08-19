@@ -1,4 +1,4 @@
-import {ServerDataSource} from "ng2-smart-table";
+import { ServerDataSource } from 'ng2-smart-table';
 
 export class BrowseTableDataSource extends ServerDataSource {
   find(element: any): Promise<any> {

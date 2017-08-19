@@ -1,14 +1,15 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {AppTranslationModule} from '../../app.translation.module';
-import {NgaModule} from '../../theme/nga.module';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AppTranslationModule } from '../../app.translation.module';
+import { NgaModule } from '../../theme/nga.module';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 
-import {BrowseComponent} from './browse.component';
-import {BrowseService} from './browse.service';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { BrowseComponent } from './browse.component';
+import { BrowseService } from './browse.service';
 import { BrowseTableComponent } from './browse-table/browse.table.component';
-import {routing} from './browse.routing';
+import { routing } from './browse.routing';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import {routing} from './browse.routing';
     AppTranslationModule,
     NgaModule,
     Ng2SmartTableModule,
+    NgxDatatableModule,
     routing
   ],
   declarations: [

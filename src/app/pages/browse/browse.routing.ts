@@ -1,4 +1,4 @@
-import { Routes, RouterModule }  from '@angular/router';
+import { Routes, RouterModule } from '@angular/router';
 
 import { BrowseComponent } from './browse.component';
 import { ModuleWithProviders } from '@angular/core';
