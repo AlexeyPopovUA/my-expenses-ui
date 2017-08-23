@@ -1,53 +1,54 @@
 import { Injectable } from '@angular/core';
-import { PagedData } from './model/paged-data';
 import { Payment } from './model/payment';
 import { Page } from './model/page';
-import { Http } from '@angular/http';
+import { Http, ResponseContentType } from '@angular/http';
+import { Sorting } from './model/sorting';
 
 /**
  * A server used to mock a paged data result from a server
  */
 @Injectable()
 export class MockServerResultsService {
-  private pagedData: PagedData<Payment> = new PagedData<Payment>();
 
   constructor(private http: Http) {
   }
 
   /**
    * A method that mocks a paged server response
-   * @param page The selected page
+   * @param paging The selected paging
+   * @param sorting
    * @returns {any} An observable containing the employee data
    */
-  getResults(page: Page): Promise<PagedData<Payment>> {
-    return this.getPagedDataRemote(page);
-  }
-
-  private getPagedDataRemote(page: Page): Promise<PagedData<Payment>> {
+  getResults(paging: Page, sorting: Sorting): Promise<Payment[]> {
     return new Promise((resolve, reject) => {
+      const searchParams: URLSearchParams = new URLSearchParams();
+
+      searchParams.set('page', paging.pageNumber.toString());
+      searchParams.set('limit', paging.size.toString());
+      searchParams.set('sort', JSON.stringify([{ field: sorting.field, direction: sorting.direction }]));
+
+      console.warn('searchParams p', searchParams.getAll('page'));
+      console.warn('searchParams l', searchParams.getAll('limit'));
+      console.warn('searchParams s', searchParams.getAll('sort'));
+
       this.http
-        .get('http://localhost:3000/payments/get')
+        .get('http://localhost:3000/payments/get', {
+          responseType: ResponseContentType.Json,
+          params: searchParams.toString()
+        })
         .toPromise()
         .then(response => {
+          const resultData = [];
           const result = response.json();
 
-          page.totalElements = result.results;
-          page.totalPages = page.totalElements / page.size;
+          paging.totalElements = result.results;
+          paging.totalPages = paging.totalElements / paging.size;
 
-          const start = page.pageNumber * page.size;
-          const end = Math.min((start + page.size), page.totalElements);
-
-          this.pagedData.data.length = 0;
-
-          for (let i = start; i < end; i++) {
-            const jsonObj = result.items[i];
-            const payment = new Payment(jsonObj._id, jsonObj.name, jsonObj.category, jsonObj.date, jsonObj.value);
-            this.pagedData.data.push(payment);
+          for (const payment of result.items) {
+            resultData.push(new Payment(payment._id, payment.name, payment.category, payment.date, payment.value));
           }
 
-          this.pagedData.page = page;
-
-          resolve(this.pagedData);
+          resolve(resultData);
         })
         .catch(error => {
           console.error(error);
@@ -55,16 +56,4 @@ export class MockServerResultsService {
         });
     });
   }
-
 }
-
-/*
-this.source = new BrowseTableDataSource(http, {
-    endPoint: 'http://localhost:3000/payments/get',
-    dataKey: 'items',
-    pagerPageKey: 'page',
-    pagerLimitKey: 'limit',
-    totalKey: 'results',
-    sortFieldKey: 'sort',
-    sortDirKey: 'direction'
-});*/

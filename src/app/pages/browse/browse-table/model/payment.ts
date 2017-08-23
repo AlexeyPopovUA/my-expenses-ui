@@ -9,7 +9,7 @@ export class Payment {
   value: number;
 
   constructor(id: string, name: string, category: string, date: string, value: number) {
-    this._id = name;
+    this._id = id;
     this.name = name;
     this.category = category;
     this.date = date;

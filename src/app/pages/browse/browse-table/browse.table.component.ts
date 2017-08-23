@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { MockServerResultsService } from './mock-server-results-service';
-//import { PagedData } from './model/paged-data';
 import { Payment } from './model/payment';
 import { Page } from './model/page';
+import { Sorting } from './model/sorting';
 
 @Component({
   selector: 'nga-browse-table',
@@ -12,16 +12,16 @@ import { Page } from './model/page';
   template: `
     <ngx-datatable
       class="material"
-      [rows]="rows"
+      [rows]="data"
       [columns]="columns"
       [columnMode]="'force'"
       [headerHeight]="50"
       [footerHeight]="50"
       [rowHeight]="'auto'"
       [externalPaging]="true"
-      [count]="page.totalElements"
-      [offset]="page.pageNumber"
-      [limit]="page.size"
+      [count]="paging.totalElements"
+      [offset]="paging.pageNumber"
+      [limit]="paging.size"
       (page)='setPage($event)'
     ></ngx-datatable>`
 })
@@ -33,12 +33,12 @@ export class BrowseTableComponent {
     { name: 'Date', prop: 'date' },
     { name: 'Value', prop: 'value' }
   ];
-  page: Page = new Page();
-  rows: Payment[] = [];
+
+  paging: Page = new Page();
+  sorting: Sorting = new Sorting('date');
+  data: Payment[] = [];
 
   constructor(private serverResultsService: MockServerResultsService) {
-    this.page.pageNumber = 0;
-    this.page.size = 50;
   }
 
   ngOnInit() {
@@ -46,17 +46,17 @@ export class BrowseTableComponent {
   }
 
   /**
-   * Populate the table with new data based on the page number
+   * Populate the table with new data based on the paging number
    * @param pageInfo
    */
   setPage(pageInfo) {
-    this.page.pageNumber = pageInfo.offset;
+    console.warn('setPage', pageInfo);
+    this.paging.pageNumber = pageInfo.offset;
     this.serverResultsService
-      .getResults(this.page)
-      .then(pagedData => {
-        console.warn('result from subscribe', pagedData);
-        this.page = pagedData.page;
-        this.rows = pagedData.data;
+      .getResults(this.paging, this.sorting)
+      .then(data => {
+        console.warn('result from subscribe', data);
+        this.data = data;
       });
   }
 }
