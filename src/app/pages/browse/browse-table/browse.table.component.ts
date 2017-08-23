@@ -3,12 +3,13 @@ import { MockServerResultsService } from './mock-server-results-service';
 import { Payment } from './model/payment';
 import { Page } from './model/page';
 import { Sorting } from './model/sorting';
+import { Direction } from './model/direction';
 
 @Component({
   selector: 'nga-browse-table',
   providers: [
     MockServerResultsService
-  ], // <!--(sort)="onSort($event)"-->
+  ],
   template: `
     <ngx-datatable
       class="material"
@@ -23,6 +24,7 @@ import { Sorting } from './model/sorting';
       [offset]="paging.pageNumber"
       [limit]="paging.size"
       (page)='setPage($event)'
+      (sort)="onSort($event)"
     ></ngx-datatable>`
 })
 export class BrowseTableComponent {
@@ -42,7 +44,7 @@ export class BrowseTableComponent {
   }
 
   ngOnInit() {
-    this.setPage({ offset: 0 });
+    return this.updatePageData();
   }
 
   /**
@@ -50,13 +52,31 @@ export class BrowseTableComponent {
    * @param pageInfo
    */
   setPage(pageInfo) {
-    console.warn('setPage', pageInfo);
     this.paging.pageNumber = pageInfo.offset;
-    this.serverResultsService
-      .getResults(this.paging, this.sorting)
+
+    this.updatePageData()
       .then(data => {
-        console.warn('result from subscribe', data);
-        this.data = data;
+        console.warn('result from paging', data);
       });
+  }
+
+  onSort(sortInfo) {
+    console.warn('onSort', sortInfo);
+    const sorter = sortInfo.sorts[0];
+    this.sorting.field = sorter.prop;
+    this.sorting.direction = sorter.dir === 'asc' ? Direction.ASC : Direction.DESC;
+
+    this.updatePageData()
+      .then(data => {
+        console.warn('result from sort', data);
+      });
+  }
+
+  updatePageData() {
+    const self = this;
+
+    return this.serverResultsService
+      .getResults(this.paging, this.sorting)
+      .then(data => self.data = data);
   }
 }

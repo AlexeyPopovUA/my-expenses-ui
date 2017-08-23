@@ -28,7 +28,6 @@ export class MockServerResultsService {
       searchParams.set('sort', JSON.stringify([{ field: sorting.field, direction: sorting.direction }]));
 
       console.warn('searchParams p', searchParams.getAll('page'));
-      console.warn('searchParams l', searchParams.getAll('limit'));
       console.warn('searchParams s', searchParams.getAll('sort'));
 
       this.http
