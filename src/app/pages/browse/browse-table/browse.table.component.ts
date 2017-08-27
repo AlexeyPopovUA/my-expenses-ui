@@ -43,8 +43,9 @@ export class BrowseTableComponent {
   constructor(private serverResultsService: MockServerResultsService) {
   }
 
-  ngOnInit() {
-    return this.updatePageData();
+  ngOnInit(): void {
+    this.updatePageData()
+      .catch(error => console.error(error));
   }
 
   /**
@@ -57,7 +58,8 @@ export class BrowseTableComponent {
     this.updatePageData()
       .then(data => {
         console.warn('result from paging', data);
-      });
+      })
+      .catch(error => console.error(error));
   }
 
   onSort(sortInfo) {
@@ -65,11 +67,14 @@ export class BrowseTableComponent {
     const sorter = sortInfo.sorts[0];
     this.sorting.field = sorter.prop;
     this.sorting.direction = sorter.dir === 'asc' ? Direction.ASC : Direction.DESC;
+    // we have to go to the first page because of the table behavior
+    this.paging.pageNumber = 0;
 
     this.updatePageData()
       .then(data => {
         console.warn('result from sort', data);
-      });
+      })
+      .catch(error => console.error(error));
   }
 
   updatePageData() {
