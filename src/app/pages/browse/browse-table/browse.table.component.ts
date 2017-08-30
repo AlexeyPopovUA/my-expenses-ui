@@ -10,22 +10,7 @@ import { Direction } from './model/direction';
   providers: [
     MockServerResultsService
   ],
-  template: `
-    <ngx-datatable
-      class="material"
-      [rows]="data"
-      [columns]="columns"
-      [columnMode]="'force'"
-      [headerHeight]="50"
-      [footerHeight]="50"
-      [rowHeight]="'auto'"
-      [externalPaging]="true"
-      [count]="paging.totalElements"
-      [offset]="paging.pageNumber"
-      [limit]="paging.size"
-      (page)='setPage($event)'
-      (sort)="onSort($event)"
-    ></ngx-datatable>`
+  templateUrl: './browse-table.html'
 })
 export class BrowseTableComponent {
 
@@ -63,7 +48,6 @@ export class BrowseTableComponent {
   }
 
   onSort(sortInfo) {
-    console.warn('onSort', sortInfo);
     const sorter = sortInfo.sorts[0];
     this.sorting.field = sorter.prop;
     this.sorting.direction = sorter.dir === 'asc' ? Direction.ASC : Direction.DESC;
@@ -83,5 +67,9 @@ export class BrowseTableComponent {
     return this.serverResultsService
       .getResults(this.paging, this.sorting)
       .then(data => self.data = data);
+  }
+
+  onSelect(selection) {
+    console.log(selection);
   }
 }
