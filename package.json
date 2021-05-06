@@ -116,7 +116,7 @@
     "tslint-language-service": "0.9.9",
     "typescript": "3.5.3",
     "typogr": "0.6.8",
-    "underscore": "1.9.1",
+    "underscore": "1.12.1",
     "wintersmith": "2.5.0",
     "wintersmith-sassy": "1.2.0"
   }
